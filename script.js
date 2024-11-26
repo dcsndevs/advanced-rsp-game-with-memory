@@ -5,10 +5,13 @@ const yourImageDisplay = document.getElementById("your-choice");
 const computerImageDisplay = document.getElementById("computer-choice");
 const buttons = document.querySelector("button");
 
+
 let playerScore = 0;
 let computerScore = 0;
 let gamePlay = 0;
 let oldcomputer = 0; //This would take on computer's previous selection
+let playerScoreMemory = [];
+let computerScoreMemory = [];
 
 
 function play(player){
@@ -19,7 +22,7 @@ function play(player){
     }while (oldcomputer==computer); //code to ensure computer does not pick same choice as before
 
     oldcomputer = computer; //oldcomputer would be used to check computer's last selection
-
+    
     if(computer==1){
         computer = "rock";
     }
@@ -29,6 +32,8 @@ function play(player){
     if(computer==3){
         computer = "scissors";
     }
+    computerScoreMemory.push(computer); //to store computer selections in an array
+    playerScoreMemory.push(player); //to store computer selections in an array
 
     let result;
     if (player === computer){
@@ -75,29 +80,54 @@ function play(player){
     }
 
     if(gamePlay==1){
-        tries=" - 1st Attempt"
+        tries="1st Attempt - "
     }
     else if(gamePlay==2){
-        tries=" - 2nd Attempt"
+        tries="2nd Attempt - "
+    }
+    else if(gamePlay==3){
+        tries="3rd Attempt - "
+    }
+    else if(gamePlay==4){
+        tries="4th Attempt - "
     }
     else(
-        tries=" - 3rd Attempt"
+        tries="5th Attempt - "
     )
 
-    resultDisplay.textContent = result+tries;
+    resultDisplay.textContent = tries+result;
     userScoreDisplay.textContent = playerScore;
     computerScoreDisplay.textContent = computerScore;
-    if(gamePlay==3){
+    if(gamePlay==5){
+        document.getElementById("main-panel").style.display = "none";
+        //smooth transition to show score board
+        const scoreboard = document.getElementById('score-board');
+        scoreboard.classList.toggle('visible');
+        yourImageDisplay.textContent = "";
+        computerImageDisplay.textContent = "";
+        
+
         if(playerScore<computerScore){
-            document.getElementById("main-panel").innerHTML = "<h1>Game Over<br>Computer Wins!</h1>";
+            resultDisplay.textContent = "Computer Wins!";
+            resultDisplay.classList.add("text-danger", "h5");
+            resultDisplay.classList.remove("bg-white");
         }
         else if (playerScore>computerScore){
-            document.getElementById("main-panel").innerHTML = "<h1>Game Over<br>You Won!</h1>";
-
-        }else{
-            document.getElementById("main-panel").innerHTML = "<h1>Game Over<br>It's a draw.</h1>";
-
+            resultDisplay.textContent = "You Won!";
+            resultDisplay.classList.add("text-info", "h5");
+            resultDisplay.classList.remove("bg-white");
+        }
+        else{
+            resultDisplay.textContent = "It's a draw.";
+            resultDisplay.classList.add("h5");
+            resultDisplay.classList.remove("bg-white");
         }
 
+        //loop to populate score from playerScoreMemory and computerScoreMemory arrays
+        for(i=0; i<gamePlay; i++){
+            document.getElementById("p"+[i+1]).innerHTML = "<i class='fas fa-hand-"+playerScoreMemory[i]+"'></i>";
+            document.getElementById("c"+[i+1]).innerHTML = "<i class='fas fa-hand-"+computerScoreMemory[i]+"'></i>";
+
+        }
     }
 }
